@@ -1,0 +1,9 @@
+.cardDetail{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.cardDetail img{
+    height: 500px;
+}

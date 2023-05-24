@@ -1,0 +1,4 @@
+.contenedorGames{
+    display: flex;
+    flex-wrap: wrap;
+}

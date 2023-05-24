@@ -1,0 +1,21 @@
+header{
+    padding: 0rem 2rem;
+    background-color: blue;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+}
+
+h1{
+    color: white;
+    font-size: 2.5rem;
+}
+
+li{
+    display: inline-block;
+    margin: 1rem;
+    cursor: pointer;
+    color: aquamarine;
+    font-size: 1.5rem;
+}
