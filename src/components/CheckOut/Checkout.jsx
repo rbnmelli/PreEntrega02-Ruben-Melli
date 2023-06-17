@@ -2,7 +2,7 @@ import React from 'react'
 import { useState, useContext } from 'react';
 import { CartContext } from '../../context/CartContext';
 import { db } from '../../services/config';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, getDoc, updateDoc } from 'firebase/firestore';
 import './checkout.css'
 
 const Checkout = () => {
@@ -39,15 +39,41 @@ const Checkout = () => {
             email
         };
 
-        addDoc(collection(db, 'ordenes'), orden)
-            .then(docRef => {
-                setOrdenId(docRef.id);
-                removeCart();
+        Promise.all(
+            orden.items.map(async (productoOrden) => {
+                const productoRef = doc(db, 'games', productoOrden.id);
+                const productoDoc = await getDoc(productoRef);
+                const stockActual = productoDoc.data().stock;
+                await updateDoc(productoRef, {
+                    stock: stockActual - productoOrden.cantidad,
+                });
             })
-            .catch(error => {
+        )
+            .then(() => {
+                addDoc(collection(db, 'ordenes'), orden)
+                    .then((docRef) => {
+                        setOrdenId(docRef.id);
+                        removeCart();
+                    })
+                    .catch(error => {
+                        console.error('error', error);
+                        setError('Error al crear la orden de compra');
+                    })
+            })
+            .catch((error) => {
                 console.error('error', error);
-                setError('Error al crear la orden de compra');
+                setError('Error al actualizar el stock');
             })
+
+        // addDoc(collection(db, 'ordenes'), orden)
+        //     .then(docRef => {
+        //         setOrdenId(docRef.id);
+        //         removeCart();
+        //     })
+        //     .catch(error => {
+        //         console.error('error', error);
+        //         setError('Error al crear la orden de compra');
+        //     })
     }
 
     return (
